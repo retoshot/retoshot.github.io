@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reto o shot</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        /* Contenedor principal */
+        .container {
+            background-color: #fff;
+            width: 100%;
+            max-width: 700px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Encabezado */
+        header {
+            background-color: #3e8ed0;
+            color: white;
+            text-align: center;
+            padding: 1.5em 0;
+            font-size: 2em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 5px solid #2b6ba6;
+        }
+
+        /* Reglas del juego */
+        .rules-container {
+            padding: 2em;
+            background-color: #f0faff;
+            border-bottom: 2px solid #ddd;
+            text-align: center;
+        }
+
+        .rules-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1em;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .rules-content {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 2em;
+        }
+
+        /* Botón centrado */
+        .center-button {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Contenedor de las cartas */
+        .card-container {
+            padding: 2.5em;
+            text-align: center;
+            display: none;
+            background-color: #fff;
+        }
+
+        /* Estilo de las cartas */
+        .card {
+            background-color: #fafafa;
+            border-radius: 12px;
+            border: 3px solid #ddd;
+            padding: 2em;
+            margin-bottom: 1.5em;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            font-family: 'Verdana', sans-serif;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Título de las cartas */
+        .card-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 1em;
+            color: #333;
+        }
+
+        /* Contenido de las cartas */
+        .card-content {
+            font-size: 1.3em;
+            color: #555;
+            margin-bottom: 1.5em;
+        }
+
+        /* Botones */
+        button {
+            background-color: #3e8ed0;
+            color: white;
+            border: none;
+            padding: 0.8em 2em;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-top: 1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #2b6ba6;
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #3e8ed0;
+            color: white;
+            text-align: center;
+            padding: 1em;
+            font-size: 0.8em;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            Reto o shot
+        </header>
+
+        <!-- Sección de reglas -->
+        <div id="rules" class="rules-container">
+            <div class="rules-title">Reglas del Juego</div>
+            <div class="rules-content">
+               1. Se podran saltar cartas pero deberas tomar los tragos correspondientes.<br>
+                2. No se podra saltar mas de 3 cartas seguidas o en caso de hacerlo debera elegir una de las 3 cartas para cumplir ese reto obligatoriamente, en caso de no querer jugar ninguna carta el jugador obligatoriamente debera jugar 3 cartas en su turno sin poder saltearse ninguna.<br>
+                3. Si algun jugador incumple una norma debera jugar obligatoriamente 5 cartas seguidas de su turno sin poder saltar ninguna.<br>
+                4. El juego se podra jugar con o sin alcohol, si se juega sin alcohol y desaen saltar la carta se debera cumplir el reto que proponga el otro jugador (se vale cualquier tipo de reto), y en caso de jugar con alcohol en la carta apareceran los tragos a beber si se desea saltar la carta (2 tragos= 1 shot)<br>
+            </div>
+            <div class="center-button">
+                <button onclick="iniciarJuego()">Iniciar Juego</button>
+            </div>
+        </div>
+
+        <!-- Sección de cartas -->
+        <div id="card-container" class="card-container">
+            <div id="card" class="card">
+                <div class="card-title" id="card-title"></div>
+                <div class="card-content" id="card-content"></div>
+            </div>
+
+            <button onclick="mostrarCarta()">Siguiente Carta</button>
+        </div>
+
+        <footer>
+            © 2024 - Aplicación de Cartas. Todos los derechos reservados.
+        </footer>
+    </div>
+
+    <script>
+        // Definir 60 cartas con textos diferentes y colores distintos
+        const cartas = [
+            { titulo: "?", contenido: "El jugador mas alto decide cuantos tragos toma el otro jugador.", color: "#FFDDC1" },
+            { titulo: "2 tragos", contenido: "Toca el techo sin saltar si no puedes toma", color: "#FFABAB" },
+            { titulo: "4 tragos", contenido: "Piedra, papel o tijeras, el perdedor hace un flash.", color: "#FFC3A0" },
+            { titulo: "5 tragos", contenido: "Menos una prenda (no valen accesorios ni calcetas, zapatos o cintos).", color: "#FF677D" },
+            { titulo: "5 tragos", contenido: "Menos una prenda (no valen accesorios ni calcetas, zapatos o cintos).", color: "#D4A5A5" },
+            { titulo: "2 tragos", contenido: "Menos una prenda (si vale cualquier tipo de accesorio).", color: "#392F5A" },
+            { titulo: "2 tragos", contenido: "Carga al otro jugador durante un minuto si no puedes toma los tragos.", color: "#31A2AC" },
+            { titulo: "4 tragos", contenido: "Tienes 13 segundos para hacer lo que quieras con el otro jugador.", color: "#61C0BF" },
+            { titulo: "?", contenido: "Jueguen con la luz apagada.", color: "#6B4226" },
+            { titulo: "?", contenido: "Dado, carta o moneda, el jugador que saque el valor mas bajo tendra que jugar 2 cartas seguidas mas.", color: "#D9BF77" },
+            { titulo: "?", contenido: "El jugador que dure mas tiempo sin respirar no juega durante 2 turnos.", color: "#ACD8AA" },
+            { titulo: "?", contenido: "Nada.", color: "#FFE156" },
+            { titulo: "3 tragos", contenido: "Toma.", color: "#6A0572" },
+            { titulo: "?", contenido: "Comodin: Revierte una carta a el otro jugador (Solo se puede usar durante tus 3 proximos turnos).", color: "#AB83A1" },
+            { titulo: "?", contenido: "Comodin: Revierte una carta a el otro jugador (Solo se puede usar durante tus 3 proximos turnos).", color: "#B8B5FF" },
+            { titulo: "1 trago", contenido: "Dirigete a la otra persona con apodos o groserias durante los 3 proximos turnos, si no se hace tomar los tragos por cada vez que no lo haga.", color: "#58D68D" },
+            { titulo: "2 tragos", contenido: "Toma.", color: "#8A7CA5" },
+            { titulo: "5 tragos", contenido: "Deja que la otra persona tenga acceso a tu galeria por un minuto.", color: "#247BA0" },
+            { titulo: "5 tragos", contenido: "Tienes acceso a un minuto con el instagram de la otra persona.", color: "#F25F5C" },
+            { titulo: "1 trago", contenido: "No puedes hablar durante 2 turnos, por cada palabra toma.", color: "#F7B801" },
+            { titulo: "1 trago", contenido: "No podras decir la palabra si y no, tomar por cada vez que lo digas.", color: "#F5CAC3" },
+            { titulo: "5 tragos", contenido: "Tienes acceso a las fotos eliminadas del otro jugador.", color: "#247BA0" },
+            { titulo: "5 tragos", contenido: "Cambia una prenda con el otro jugador en ese mismo lugar(Solo valen prendas).", color: "#FFBF46" },
+            { titulo: "3 tragos", contenido: "La otra persona elige un contacto y enviara un mensaje pero solo usando emojis.", color: "#6F7C12" },
+            { titulo: "4 tragos", contenido: "Ambos jugadores jugaran 2 turnos sin camisa .", color: "#DDA448" },
+            { titulo: "2 tragos", contenido: "Competencia de equilibrio, el perdedor toma.", color: "#FF7597" },
+            { titulo: "3 tragos", contenido: "Vendate los ojos y tendras que adivinar un objeto que el otro jugador usara para que lo adivines con el tacto y si no adivina toma.", color: "#F6AE2D" },
+            { titulo: "2 tragos", contenido: "El primero en reir pierde y toma (se vale hacer gestos pero sin tocar a la otra persona).", color: "#BC5A45" },
+            { titulo: "2 tragos", contenido: "Imitar los movimientos de la otra persona en los proximos 3 turnos, tomar por cada vez que no lo haga.", color: "#A09ABC" },
+            { titulo: "3 tragos", contenido: "Ambos jugadores deberan dibujar lo que ustedes quieran con los ojos tapados y el dibujo mas bonito no toma.", color: "#EFD6AC" },
+            { titulo: "4 tragos", contenido: "Sientate en las piernas del otro jugador durante 3 turnos.", color: "#B565A7" },
+            { titulo: "2 tragos", contenido: "El primer jugador en parpadear pierde y toma.", color: "#96CEB4" },
+            { titulo: "5 tragos", contenido: "Jugar a la botella y el perdedor pierde una prenda.", color: "#FF6F61" },
+            { titulo: "3 tragos", contenido: "Dale un masaje en el cuello al otro jugador.", color: "#6B4226" },
+            { titulo: "6 tragos", contenido: "Imitar una posicion sexual.", color: "#008891" },
+            { titulo: "3 tragos", contenido: "Juegen una partida del gato(tic tac toe) y el perdedor toma.", color: "#3E000C" },
+            { titulo: "?", contenido: "Jueguen piedra papel o tijera y el ganador elige si el perdedor se quita una prenda o toma 4 tragos.", color: "#5A3931" },
+            { titulo: "Termina lo que quede de tu bebida", contenido: "Ambos jugadores juegan sin camisa.", color: "#39375B" },
+            { titulo: "2 tragos", contenido: "Ambos jugadores digan el cumpleaños de la otra persona y si no se lo saben toma.", color: "#2A363B" },
+            { titulo: "3 tragos", contenido: "Dale una cachetada al otro jugador.", color: "#FFEEDD" },
+            { titulo: "2 tragos", contenido: "El jugador con la bebida mas llena toma.", color: "#D2B4DE" },
+            { titulo: "3 tragos", contenido: "Ambos deberan hacer una plancha y el que dure menos toma.", color: "#566573" },
+            { titulo: "3 tragos", contenido: "Toma una cucharada de mostaza.", color: "#E74C3C" },
+            { titulo: "3 tragos", contenido: "Cuentale un secreto que nadie sepa a la otra persona.", color: "#7DCEA0" },
+            { titulo: "4 tragos", contenido: "Haz una confesion fuerte.", color: "#F1C40F" },
+            { titulo: "3 tragos", contenido: "El otro jugador te hara una pregunta personal.", color: "#82E0AA" },
+            { titulo: "5 tragos", contenido: "Besa las piernas del otro jugador.", color: "#AF7AC5" },
+            { titulo: "6 tragos", contenido: "Coloca tu mano en la pierna del otro jugador y mantenla ahi durante 3 turnos.", color: "#D98880" },
+            { titulo: "6 tragos", contenido: "Gime al oido del otro jugador.", color: "#5499C7" },
+            { titulo: "6 tragos", contenido: "Flash.", color: "#F1948A" },
+            { titulo: "5 tragos", contenido: "Quitate la camisa por 3 turnos.", color: "#E59866" },
+            { titulo: "4 tragos", contenido: "Ambos jugadores tendran que abrazarse sin camisa.", color: "#F7DC6F" },
+            { titulo: "3 tragos", contenido: "Muestrale tu ropa interior al otro jugador.", color: "#7FB3D5" },
+            { titulo: "4 tragos", contenido: "Besa las piernas del otro jugador.", color: "#DC7633" },
+            { titulo: "5 tragos", contenido: "Besa el pecho del otro jugador.", color: "#A04000" },
+            { titulo: "6 tragos", contenido: "El otro jugador te quitara una prenda.", color: "#7D6608" },
+            { titulo: "6 tragos", contenido: "Tomate una foto en ropa interior y enviasela al otro jugador.", color: "#512E5F" },
+            { titulo: "2 tragos", contenido: "Exprime un limon y tomatelo sin hacer gestos.", color: "#7D3C98" },
+            { titulo: "4 tragos", contenido: "Responde: Cuando fue la ultima vez que te tocaste?.", color: "#5DADE2" },
+            { titulo: "2 tragos", contenido: "Di un trabalenguas sin equivocarte en el primer intento.", color: "#DC7633" }
+        ];
+
+        let cartasMostradas = [];
+
+        function iniciarJuego() {
+            document.getElementById('rules').style.display = 'none';
+            document.getElementById('card-container').style.display = 'block';
+            mostrarCarta();
+        }
+
+        function mostrarCarta() {
+            if (cartasMostradas.length === cartas.length) {
+                alert("¡Se han mostrado todas las cartas! Volverás a las reglas.");
+                cartasMostradas = [];
+                document.getElementById('card-container').style.display = 'none';
+                document.getElementById('rules').style.display = 'block';
+                return;
+            }
+
+            let cartaAleatoria;
+            do {
+                cartaAleatoria = cartas[Math.floor(Math.random() * cartas.length)];
+            } while (cartasMostradas.includes(cartaAleatoria));
+
+            cartasMostradas.push(cartaAleatoria);
+
+            // Cambiar el color de fondo según la carta
+            document.getElementById('card').style.backgroundColor = cartaAleatoria.color;
+
+            // Mostrar título y contenido de la carta
+            document.getElementById('card-title').innerText = cartaAleatoria.titulo;
+            document.getElementById('card-content').innerText = cartaAleatoria.contenido;
+        }
+    </script>
+
+</body>
+</html>
